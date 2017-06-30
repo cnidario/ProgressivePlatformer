@@ -15,8 +15,6 @@ public class GameScreen extends ScreenAdapter {
         this.game = game;
         engine = new PooledEngine();
         world = new World(engine);
-        engine.addSystem(new SpatialPolynomialSystem());
-        engine.addSystem(new ClockSystem());
         world.create();
         renderEngine = new RenderEngine(game.batch, world);
     }
