@@ -11,6 +11,7 @@ public class Assets {
     public static Texture caveman;
     public static TextureRegion cavemanIdle1;
     public static Animation<TextureRegion> cavemanIdle;
+    public static Animation<TextureRegion> cavemanWalking;
 
     public static void load() {
         background = new Texture(Gdx.files.internal("background/background-1.png"));
@@ -24,6 +25,13 @@ public class Assets {
                 new TextureRegion(caveman, 306, 8, 60, 57),
                 new TextureRegion(caveman, 403, 8, 60, 57),
                 new TextureRegion(caveman, 500, 8, 60, 57));
+        cavemanWalking = new Animation<TextureRegion>(0.15f,
+                new TextureRegion(caveman, 112, 76, 60, 57),
+                new TextureRegion(caveman, 209, 76, 60, 57),
+                new TextureRegion(caveman, 306, 76, 60, 57),
+                new TextureRegion(caveman, 403, 76, 60, 57),
+                new TextureRegion(caveman, 500, 76, 60, 57));
         cavemanIdle.setPlayMode(Animation.PlayMode.LOOP);
+        cavemanWalking.setPlayMode(Animation.PlayMode.LOOP);
     }
 }

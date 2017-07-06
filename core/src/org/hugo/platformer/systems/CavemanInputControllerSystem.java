@@ -6,6 +6,7 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import org.hugo.platformer.Assets;
 import org.hugo.platformer.components.CavemanActionStateComponent;
 import org.hugo.platformer.components.CavemanInputControllerComponent;
 
@@ -21,6 +22,7 @@ public class CavemanInputControllerSystem extends IteratingSystem {
     protected void processEntity(Entity entity, float deltaTime) {
         CavemanInputControllerComponent input = inputM.get(entity);
         CavemanActionStateComponent state = stateM.get(entity);
+        CavemanActionStateComponent.State oldState = state.state;
         if(Gdx.input.isKeyPressed(Input.Keys.A)) {
             state.state = CavemanActionStateComponent.State.WALKING_LEFT;
         } else if(Gdx.input.isKeyPressed(Input.Keys.D)) {
@@ -28,5 +30,7 @@ public class CavemanInputControllerSystem extends IteratingSystem {
         } else {
             state.state = CavemanActionStateComponent.State.IDLE;
         }
+
+        state.changed = state.state != oldState;
     }
 }

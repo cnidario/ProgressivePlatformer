@@ -9,13 +9,11 @@ import org.hugo.platformer.components.PolynomialMovementComponent;
 import org.hugo.platformer.components.SpatialComponent;
 
 public class SpatialPolynomialSystem extends IteratingSystem {
-    private ComponentMapper<PolynomialMovementComponent> polynomialMovementM;
-    private ComponentMapper<SpatialComponent> spatialM;
+    private ComponentMapper<PolynomialMovementComponent> polynomialMovementM = ComponentMapper.getFor(PolynomialMovementComponent.class);
+    private ComponentMapper<SpatialComponent> spatialM = ComponentMapper.getFor(SpatialComponent.class);
 
     public SpatialPolynomialSystem() {
         super(Family.all(PolynomialMovementComponent.class, SpatialComponent.class).get());
-        polynomialMovementM = ComponentMapper.getFor(PolynomialMovementComponent.class);
-        spatialM = ComponentMapper.getFor(SpatialComponent.class);
     }
 
     @Override

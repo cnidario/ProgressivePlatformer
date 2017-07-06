@@ -6,10 +6,8 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import org.hugo.platformer.components.AnimationComponent;
-import org.hugo.platformer.components.ClockComponent;
-import org.hugo.platformer.components.SpatialComponent;
-import org.hugo.platformer.components.VisualAspectComponent;
+import com.badlogic.gdx.math.Affine2;
+import org.hugo.platformer.components.*;
 
 public class RenderEngine {
     private SpriteBatch batch;
@@ -32,7 +30,6 @@ public class RenderEngine {
 
         renderBackground();
         renderVisualAspects();
-        renderAnimations();
 
         batch.end();
     }
@@ -40,26 +37,27 @@ public class RenderEngine {
         batch.draw(background, 0, 0, 640, 480);
     }
     public void renderVisualAspects() {
-        Family drawablesFamily = Family.all(VisualAspectComponent.class, SpatialComponent.class).get();
+        Family drawablesFamily = Family.all(TextureVisualAspectComponent.class, SpatialComponent.class).get();
         ComponentMapper<SpatialComponent> spatialM = ComponentMapper.getFor(SpatialComponent.class);
-        ComponentMapper<VisualAspectComponent> visualM = ComponentMapper.getFor(VisualAspectComponent.class);
+        ComponentMapper<TextureVisualAspectComponent> visualM = ComponentMapper.getFor(TextureVisualAspectComponent.class);
+        ComponentMapper<TransformComponent> transformM = ComponentMapper.getFor(TransformComponent.class);
         for(Entity e : world.engine.getEntitiesFor(drawablesFamily)) {
             SpatialComponent spatial = spatialM.get(e);
-            VisualAspectComponent visual = visualM.get(e);
-            batch.draw(visual.textureRegion, spatial.position.x, spatial.position.y);
-        }
-    }
-    public void renderAnimations() {
-        Family animationsFamily = Family.all(AnimationComponent.class, SpatialComponent.class, ClockComponent.class).get();
-        ComponentMapper<SpatialComponent> spatialM = ComponentMapper.getFor(SpatialComponent.class);
-        ComponentMapper<AnimationComponent> animationM = ComponentMapper.getFor(AnimationComponent.class);
-        ComponentMapper<ClockComponent> clockM = ComponentMapper.getFor(ClockComponent.class);
-        for(Entity e : world.engine.getEntitiesFor(animationsFamily)) {
-            AnimationComponent animation = animationM.get(e);
-            SpatialComponent spatial = spatialM.get(e);
-            ClockComponent clock = clockM.get(e);
-            TextureRegion tex = animation.animation.getKeyFrame(clock.localTime);
-            batch.draw(tex, spatial.position.x, spatial.position.y);
+            TextureVisualAspectComponent visual = visualM.get(e);
+            TransformComponent transform = transformM.get(e);
+            TextureRegion tex = visual.textureRegion;
+            if(transform != null) {
+                float w = tex.getRegionWidth();
+                float h = tex.getRegionHeight();
+                float x = transform.flipX ? spatial.position.x + w : spatial.position.x;
+                float y = spatial.position.y;
+                if(transform.flipX) w = -w;
+
+                batch.draw(tex, x, y, 0, 0, w, h,
+                        transform.scaleX, transform.scaleY, transform.rotation);
+            } else {
+                batch.draw(tex, spatial.position.x, spatial.position.y);
+            }
         }
     }
 }
