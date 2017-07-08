@@ -38,13 +38,10 @@ public class StateMovementSystem extends IteratingSystem {
         }
         switch(state.state) {
             case IDLE: break;
-            case WALKING_LEFT:
-                polyMovement.position.add(Vector2.X.cpy().scl(-170f));
-                transform.flipX = true;
-                break;
-            case WALKING_RIGHT:
-                polyMovement.position.add(Vector2.X.cpy().scl(170f));
-                transform.flipX = false;
+            case WALKING:
+                float scale = state.facing == CavemanActionStateComponent.Facing.LEFT ? -10f : 10f;
+                polyMovement.position.add(Vector2.X.cpy().scl(scale));
+                transform.flipX = state.facing == CavemanActionStateComponent.Facing.LEFT;
                 break;
         }
     }

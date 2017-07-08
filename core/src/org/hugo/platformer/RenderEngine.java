@@ -6,35 +6,39 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Affine2;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import org.hugo.platformer.components.*;
 
 public class RenderEngine {
     private SpriteBatch batch;
+    private OrthogonalTiledMapRenderer mapRenderer;
     private OrthographicCamera cam;
-    private TextureRegion background;
     private World world;
 
     public RenderEngine(SpriteBatch batch, World world) {
         this.batch = batch;
         cam = new OrthographicCamera(640, 480);
-        cam.position.set(640/2, 480/2, 0);
-        background = Assets.backgroundRegion;
+        //cam.position.set(0, 0, 0);
+        cam.setToOrtho(false, 20, 15);
         this.world = world;
+        mapRenderer = new OrthogonalTiledMapRenderer(world.map, 1/32f);
+        mapRenderer.setView(cam);
     }
 
     public void render() {
         cam.update();
+
+        renderLevel();
+
         batch.setProjectionMatrix(cam.combined);
         batch.begin();
 
-        renderBackground();
         renderVisualAspects();
 
         batch.end();
     }
-    public void renderBackground() {
-        batch.draw(background, 0, 0, 640, 480);
+    public void renderLevel() {
+        mapRenderer.render();
     }
     public void renderVisualAspects() {
         Family drawablesFamily = Family.all(TextureVisualAspectComponent.class, SpatialComponent.class).get();
@@ -47,8 +51,8 @@ public class RenderEngine {
             TransformComponent transform = transformM.get(e);
             TextureRegion tex = visual.textureRegion;
             if(transform != null) {
-                float w = tex.getRegionWidth();
-                float h = tex.getRegionHeight();
+                float w = tex.getRegionWidth()/32f;
+                float h = tex.getRegionHeight()/32f;
                 float x = transform.flipX ? spatial.position.x + w : spatial.position.x;
                 float y = spatial.position.y;
                 if(transform.flipX) w = -w;

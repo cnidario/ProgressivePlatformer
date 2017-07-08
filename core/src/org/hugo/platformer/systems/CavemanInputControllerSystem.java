@@ -24,9 +24,11 @@ public class CavemanInputControllerSystem extends IteratingSystem {
         CavemanActionStateComponent state = stateM.get(entity);
         CavemanActionStateComponent.State oldState = state.state;
         if(Gdx.input.isKeyPressed(Input.Keys.A)) {
-            state.state = CavemanActionStateComponent.State.WALKING_LEFT;
+            state.state = CavemanActionStateComponent.State.WALKING;
+            state.facing = CavemanActionStateComponent.Facing.LEFT;
         } else if(Gdx.input.isKeyPressed(Input.Keys.D)) {
-            state.state = CavemanActionStateComponent.State.WALKING_RIGHT;
+            state.state = CavemanActionStateComponent.State.WALKING;
+            state.facing = CavemanActionStateComponent.Facing.RIGHT;
         } else {
             state.state = CavemanActionStateComponent.State.IDLE;
         }

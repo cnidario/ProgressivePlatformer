@@ -3,6 +3,8 @@ package org.hugo.platformer;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Affine2;
 import com.badlogic.gdx.math.Vector2;
 import org.hugo.platformer.components.*;
@@ -15,6 +17,7 @@ public class World {
     public PooledEngine engine;
     public final Random rand = new Random();
     public Entity caveman;
+    public TiledMap map;
 
     public World(PooledEngine engine) {
         this.engine = engine;
@@ -27,6 +30,7 @@ public class World {
 
     public void create() {
         caveman = createCaveman();
+        map = createLevel();
     }
     public Entity createCaveman() {
         Entity caveman = engine.createEntity();
@@ -38,9 +42,9 @@ public class World {
         CavemanInputControllerComponent input = engine.createComponent(CavemanInputControllerComponent.class);
         TransformComponent transform = engine.createComponent(TransformComponent.class);
 
-        spatial.position = new Vector2(150, 150);
+        spatial.position = new Vector2(1, 6);
         polynomialMovement.position = Polynomial.constant(Vector2.Zero);
-        polynomialMovement.position.add(new Vector2(25f, 0));
+        polynomialMovement.position.add(new Vector2(0.1f, 0));
         aspect.textureRegion = Assets.cavemanIdle1;
         animation.animation = Assets.cavemanIdle;
         animation.enabled = true;
@@ -49,8 +53,7 @@ public class World {
         state.changed = true;
         state.animations = new LinkedHashMap<CavemanActionStateComponent.State, Animation>();
         state.animations.put(CavemanActionStateComponent.State.IDLE, Assets.cavemanIdle);
-        state.animations.put(CavemanActionStateComponent.State.WALKING_LEFT, Assets.cavemanWalking);
-        state.animations.put(CavemanActionStateComponent.State.WALKING_RIGHT, Assets.cavemanWalking);
+        state.animations.put(CavemanActionStateComponent.State.WALKING, Assets.cavemanWalking);
         transform.scaleX = transform.scaleY = 1;
         transform.rotation = 0;
         transform.flipX = transform.flipY = false;
@@ -66,5 +69,9 @@ public class World {
 
         engine.addEntity(caveman);
         return caveman;
+    }
+    public TiledMap createLevel() {
+        TiledMap map = new TmxMapLoader().load("map1.tmx");
+        return map;
     }
 }
