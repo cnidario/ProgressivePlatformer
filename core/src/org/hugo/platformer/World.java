@@ -1,11 +1,12 @@
 package org.hugo.platformer;
 
+import com.alwex.tree.QuadRectangle;
+import com.alwex.tree.QuadTree;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import com.badlogic.gdx.math.Affine2;
 import com.badlogic.gdx.math.Vector2;
 import org.hugo.platformer.components.*;
 import org.hugo.platformer.math.Polynomial;
@@ -18,6 +19,7 @@ public class World {
     public final Random rand = new Random();
     public Entity caveman;
     public TiledMap map;
+    public QuadTree<Entity> quadTree;
 
     public World(PooledEngine engine) {
         this.engine = engine;
@@ -26,6 +28,9 @@ public class World {
         engine.addSystem(new CavemanInputControllerSystem());
         engine.addSystem(new StateMovementSystem());
         engine.addSystem(new AnimationSystem());
+        QuadTree.maxItemByNode = 20;
+        QuadTree.maxLevel = 10;
+        quadTree = new QuadTree<Entity>(new QuadRectangle(0, 0, 20, 20), 0);
     }
 
     public void create() {
@@ -68,6 +73,7 @@ public class World {
         caveman.add(transform);
 
         engine.addEntity(caveman);
+        quadTree.insert(new QuadRectangle(1,1,1,1), caveman);
         return caveman;
     }
     public TiledMap createLevel() {

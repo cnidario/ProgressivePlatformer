@@ -26,6 +26,10 @@ public class RenderEngine {
     }
 
     public void render() {
+        float x = cam.position.x;
+        float y = cam.position.y;
+        float z = cam.position.z;
+        //cam.position.set(x + 0.1f, y, z);
         cam.update();
 
         renderLevel();
